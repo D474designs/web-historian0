@@ -14,7 +14,7 @@ exports.headers = {
 exports.sendResponse = function (response, data, statusCode) {
   statusCode = statusCode || 200;
   response.writeHead(statusCode, exports.headers);
-  response.end(JSON.stringify(data));
+  response.end(data);
 };
 
 exports.collectData = function (request, cb) {
@@ -23,12 +23,18 @@ exports.collectData = function (request, cb) {
     data += chunk;
   });
   request.on('end', function () {
-    cb(JSON.parse(data));
+    cb(data);
   });
 };
 
 exports.send404 = function(response){
   exports.sendResponse(response, '404: Page not found', 404);  
+};
+
+exports.sendRedirect = function(response, location, status){
+  status = status || 302;
+  response.writeHead(status, {Location: location});
+  response.end();
 };
 
 exports.serveAssets = function(res, asset, callback) {
@@ -50,7 +56,7 @@ exports.serveAssets = function(res, asset, callback) {
         }
       });
     } else {
-      //serve the files
+      //serve the 
       exports.sendResponse(res, data);
     }
   });
